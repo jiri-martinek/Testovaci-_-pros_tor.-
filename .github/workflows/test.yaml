@@ -36,5 +36,6 @@ jobs:
           if [ ${#CONTAINER_NAME} -lt 3 ]; then
             CONTAINER_NAME="${CONTAINER_NAME}tfstate"
           fi
+          echo "📦 Raw: ${RAW_NAME} → Sanitized: ${CONTAINER_NAME}"
           echo "container_name=${CONTAINER_NAME}" >> "$GITHUB_OUTPUT"
 
