@@ -27,10 +27,8 @@ jobs:
         run: |
           RAW_NAME="${{ github.event.repository.name }}"
           CONTAINER_NAME=$(echo "$RAW_NAME" \
-            | tr '[:upper:]' '[:lower:]' \
-            | sed 's/[^a-z0-9-]/-/g' \
-            | sed 's/--*/-/g' \
-            | sed 's/^-//;s/-$//' \
+            | tr '[:upper:]._' '[:lower:]--' \
+            | sed 's/--*/-/g;s/^-//;s/-$//' \
             | cut -c1-63)
           # pojistka na min. délku
           if [ ${#CONTAINER_NAME} -lt 3 ]; then
