@@ -1,0 +1,40 @@
+name: Terraform Workflow Prod
+
+on:
+  workflow_dispatch: 
+    inputs:
+      action:
+        description: 'Choose action to perform'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - plan
+          - apply
+  #push:  # <-- This triggers the workflow on push events
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+  
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sanitize container name
+        id: sanitize
+        run: |
+          RAW_NAME="${{ github.event.repository.name }}"
+          CONTAINER_NAME=$(echo "$RAW_NAME" \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed 's/[^a-z0-9-]/-/g' \
+            | sed 's/--*/-/g' \
+            | sed 's/^-//;s/-$//' \
+            | cut -c1-63)
+          # pojistka na min. délku
+          if [ ${#CONTAINER_NAME} -lt 3 ]; then
+            CONTAINER_NAME="${CONTAINER_NAME}tfstate"
+          fi
+          echo "container_name=${CONTAINER_NAME}" >> "$GITHUB_OUTPUT"
+
